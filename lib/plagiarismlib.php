@@ -204,3 +204,25 @@ function plagiarism_load_available_plugins() {
     }
     return $availableplugins;
 }
+/**
+ * displays the overall score for the given submission.
+ *
+ * @param object  $linkarray contains all relevant information for the plugin retrieve the overall score
+ * @return string - overall score value for the given submission.
+ */
+function plagiarism_get_overall_score($linkarray) {
+    global $CFG;
+    if (empty($CFG->enableplagiarism)) {
+        return '';
+    }
+    $plagiarismplugins = core_component::get_plugin_list('plagiarism');
+    $output = '';
+    foreach($plagiarismplugins as $plugin => $dir) {
+        require_once($dir.'/lib.php');
+        $plagiarismclass = "plagiarism_plugin_$plugin";
+        $plagiarismplugin = new $plagiarismclass;
+        $output .= $plagiarismplugin->get_overall_score($linkarray);
+    }
+    return $output;
+
+}

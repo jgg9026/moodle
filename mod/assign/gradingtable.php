@@ -929,6 +929,7 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string
      */
     public function col_grade(stdClass $row) {
+        global $CFG;
         $o = '';
 
         $link = '';
@@ -959,6 +960,13 @@ class assign_grading_table extends table_sql implements renderable {
                                        $this->quickgrading && !$gradingdisabled,
                                        $row->userid,
                                        $row->timemarked);
+
+        if(!empty($CFG->enableplagiarism)) {
+            $grade .= '<br>';
+            $grade .= plagiarism_get_overall_score(array('userid' => $row->userid,
+                'cmid' => $this->assignment->get_course_module()->id,
+                'submissionid' => $row->submissionid));
+        }
 
         return $grade;
     }
